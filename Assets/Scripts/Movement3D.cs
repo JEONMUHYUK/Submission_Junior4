@@ -11,6 +11,8 @@ public class Movement3D : MonoBehaviour
     private float gravity = -9.81f; //중력 계수
     private Vector3 moveDirection; // 이동방향
 
+    GameObject nearObject;
+
     [SerializeField]
     private Transform cameraTransform; // 카메라 transform 컴포넌트
     private CharacterController characterController; // 캐릭터 컨트롤러 변수.
@@ -46,6 +48,22 @@ public class Movement3D : MonoBehaviour
         if (characterController.isGrounded == true)
         {   
             moveDirection.y = jumpForce; // 무브다이렉션의 y축값에 점프값을 대입한다.
+        }
+    }
+
+    public void OnTriggerStay(Collider other) {
+        if(other.tag == "Weapon")
+        {
+            nearObject = other.gameObject;
+
+            Debug.Log(nearObject.name);
+        }
+    }
+
+    public void OnTriggerExit(Collider other) {
+        if(other.tag == "Weapon")
+        {
+            nearObject = null;
         }
     }
 }
