@@ -6,27 +6,33 @@ public class WeaponAssaultRifle : MonoBehaviour
 {
     [Header("Fire Effects")]
     [SerializeField]
-    private GameObject muzzleFlashEffect;       //총구 이펙트(On/Off)
+    private GameObject      muzzleFlashEffect;          //총구 이펙트(On/Off)
 
     [Header("Audio Clips")] // 굵은 글씨체로 인스펙터 창에 보이게 할 수 있다.
     [SerializeField]
-    private AudioClip audioClipTakeOutWeapon; // 무기 장착 사운드
+    private AudioClip       audioClipTakeOutWeapon;     // 무기 장착 사운드
     [SerializeField]
-    private AudioClip audioClipFire;            // 공격 사운드
+    private AudioClip       audioClipFire;              // 공격 사운드
+
+    [Header("Spawn Points")]
+    [SerializeField]
+    private Transform       casingSpawnPoint;           // 탄피 생성 위치
 
     [Header("Weapon Setting")]
     [SerializeField]
-    private WeaponSetting weaponSetting;        //무기 설정
+    private WeaponSetting   weaponSetting;              //무기 설정
 
-    private float         lastAttackTime = 0;   //마지막 발사시간 체크용
+    private float           lastAttackTime = 0;         //마지막 발사시간 체크용
 
-    private AudioSource audioSource;  //사운드 재생 컴포넌트
-    private PlayerAnimatorController animator;  // 애니메이션 재생 제어
+    private AudioSource             audioSource;        //사운드 재생 컴포넌트
+    private PlayerAnimatorController animator;          // 애니메이션 재생 제어
+    private CasingMemoryPool casingMemoryPool;          // 탄피 생성 후 활성/비활성 관리
 
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>(); //오디오 소스 컴포넌트를 불러와 변수에 저장.
-        animator = GetComponentInParent<PlayerAnimatorController>();
+        audioSource         = GetComponent<AudioSource>(); //오디오 소스 컴포넌트를 불러와 변수에 저장.
+        animator            = GetComponentInParent<PlayerAnimatorController>();
+        casingMemoryPool    = GetComponent<CasingMemoryPool>();
     }
 
     private void OnEnable() //무기 오브젝트가 활성화 될때 호출되는 함수.
@@ -93,6 +99,8 @@ public class WeaponAssaultRifle : MonoBehaviour
             StartCoroutine("OnMuzzleFlashEffect");
             // 공격 사운드 재생
             PlaySound(audioClipFire);
+            // 탄피 생성
+            casingMemoryPool.SapwnCasing(casingSpawnPoint.position, transform.right);
         }
     }
 
