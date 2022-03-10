@@ -6,9 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Input KeyCodes")]
     [SerializeField]
-    private KeyCode     KeyCodeRun = KeyCode.LeftShift; //달리기 키
+    private KeyCode     KeyCodeRun = KeyCode.LeftShift; // 달리기 키
     [SerializeField]
-    private KeyCode     KeyCodeJump = KeyCode.Space;    //점프 키
+    private KeyCode     KeyCodeJump = KeyCode.Space;    // 점프 키
+    [SerializeField]    
+    private KeyCode     KeyCodeReload = KeyCode.R;      // 탄 재장전 키
 
     [Header("Audio Clips")]
     [SerializeField]
@@ -16,10 +18,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private AudioClip audioClipRun;                     // 달리기 사운드
 
-    private RotateToMouse                rotateToMouse; //마우스 이동으로 카메라 회전
-    private MoveCharacterController      movement;      //키보드 입력으로 플레이어 이동, 점프
-    private Status                       status;       // 이동속도 등의 플레이어 정보
-    private PlayerAnimatorController     animator;     // 애니메이션 재생 제어 
+    private RotateToMouse                rotateToMouse; // 마우스 이동으로 카메라 회전
+    private MoveCharacterController      movement;      // 키보드 입력으로 플레이어 이동, 점프
+    private Status                       status;        // 이동속도 등의 플레이어 정보
+    private PlayerAnimatorController     animator;      // 애니메이션 재생 제어 
     private AudioSource                  audioSource;   // 사운드 재생 제어
     private WeaponAssaultRifle           weapon;        // 무기를 이용한 공격 제어
 
@@ -115,6 +117,10 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             weapon.StopWeaponAction();
+        }
+        if ( Input.GetKeyDown(KeyCodeReload) )
+        {
+            weapon.StartReload();
         }
     }
 }

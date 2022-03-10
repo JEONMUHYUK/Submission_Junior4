@@ -22,10 +22,20 @@ public class PlayerAnimatorController : MonoBehaviour
         // -> Animator View에 있는 float 타입 변수 "ParaName"의 값을 반환한다.
     }
 
+    public void OnReload()
+    {
+        animator.SetTrigger("onReload");                                    // animator의 onReload 파라미터를 활성화(on) 시킨다.
+    }
+
     public void Play(string statName, int layer, float normalizedTime) 
     {
         //외부에서 호출할 수 있도록 Play메서드 정의
         animator.Play(statName, layer, normalizedTime);
     }
     
+    public bool CurrentAnimationIs(string name)
+    {   // 매게변수로 받아온 name(animation)이 현재 재생중인지 확인하고 그 결과를 반환한다.
+        return animator.GetCurrentAnimatorStateInfo(0).IsName(name);
+    }
+
 }

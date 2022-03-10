@@ -8,10 +8,16 @@ using UnityEngine;
 // Tip. 구조체는 스택영역, 클래스는 힙 영역에 메모리가 할당된다.
 // Tip. [System.Serializable]을 이용해 직렬화를 하지 않으면 다른 클래스의 변수로 생성되었을 때 Inspector 창에 멤버 변수들의 목록이 뜨지않는다.
 
+// WeapomName 열거형 정의
+public enum WeaponName { AssaultRifle = 0 }
+
 [System.Serializable]
 public struct WeaponSetting 
 {
-    public float            attackRate;             //공격속도
-    public float            attackDistance;         //공격 사거리
+    public WeaponName       weaponName;             // 무기이름
+    public int              currentAmmo;            // 현재 탄약수
+    public int              maxAmmo;                // 최대 탄약수
+    public float            attackRate;             // 공격속도
+    public float            attackDistance;         // 공격 사거리
     public bool             isAutomaticAttack;      // 연속 공격 여부
 }
