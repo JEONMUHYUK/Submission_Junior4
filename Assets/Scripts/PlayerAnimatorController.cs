@@ -27,6 +27,13 @@ public class PlayerAnimatorController : MonoBehaviour
         animator.SetTrigger("onReload");                                    // animator의 onReload 파라미터를 활성화(on) 시킨다.
     }
 
+    // Assult Rifle 마우스 오른쪽 클릭 액션 (default/aim  mode)
+    public bool AimModeIs
+    {
+        set => animator.SetBool("isAimMode", value);
+        get => animator.GetBool("isAimMode");
+    }
+
     public void Play(string statName, int layer, float normalizedTime) 
     {
         //외부에서 호출할 수 있도록 Play메서드 정의
