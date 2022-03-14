@@ -269,6 +269,11 @@ public class WeaponAssaultRifle : MonoBehaviour
         {
             // 부딪힌 오브젝트 정보값을 SpawnImpact에 전달한다.
             imapctMemoryPool.SpawnImpact(hit);
+
+            if ( hit.transform.CompareTag("ImpactEnemy") )
+            {
+                hit.transform.GetComponent<EnemyFSM>().TakeDamage(weaponSetting.damage);
+            }
         }
 
         Debug.DrawRay(bulletSpawnPoint.position, attackDirection*weaponSetting.attackDistance, Color.blue);

@@ -8,16 +8,9 @@ TagManager:
   - Metal
   - Blood
   - Dirt
-  - Concrete
-  - ExplosiveBarrel
-  - Target
-  - GasTank
-  - Metal (Static)
-  - Wood (Static)
-  - Dirt (Static)
-  - Wood
   - ImpactNormal
   - ImpactObstacle
+  - ImpactEnemy
   layers:
   - Default
   - TransparentFX
