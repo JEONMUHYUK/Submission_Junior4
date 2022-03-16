@@ -9,7 +9,7 @@ using UnityEngine;
 // Tip. [System.Serializable]을 이용해 직렬화를 하지 않으면 다른 클래스의 변수로 생성되었을 때 Inspector 창에 멤버 변수들의 목록이 뜨지않는다.
 
 // WeapomName 열거형 정의
-public enum WeaponName { AssaultRifle = 0 }
+public enum WeaponName { AssaultRifle = 0, Revolver, CombatKnife, HandGrenade}
 
 [System.Serializable]
 public struct WeaponSetting 

@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 182b7f11db452bc458d35a6c9eced06f
 ModelImporter:
-  serializedVersion: 21100
+  serializedVersion: 20200
   internalIDToNameTable:
   - first:
       1: 100000
@@ -765,7 +765,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.24832214
+      - time: 0.29376256
         functionName: StartWeaponKnifeCollider
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -802,6 +802,13 @@ ModelImporter:
       curves: []
       events:
       - time: 0.2751678
+        functionName: StartWeaponKnifeCollider
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.28169015
         functionName: StartWeaponKnifeCollider
         data: 
         objectReferenceParameter: {instanceID: 0}

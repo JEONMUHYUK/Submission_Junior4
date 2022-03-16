@@ -20,10 +20,9 @@ public class PlayerController : MonoBehaviour
 
     private RotateToMouse                rotateToMouse; // 마우스 이동으로 카메라 회전
     private MoveCharacterController      movement;      // 키보드 입력으로 플레이어 이동, 점프
-    private Status                       status;        // 이동속도 등의 플레이어 정보
-    private PlayerAnimatorController     animator;      // 애니메이션 재생 제어 
+    private Status                       status;        // 이동속도 등의 플레이어 정보   
     private AudioSource                  audioSource;   // 사운드 재생 제어
-    private WeaponAssaultRifle           weapon;        // 무기를 이용한 공격 제어
+    private WeaponBase                   weapon;        // 모든 무기가 상속받는 기반 클래스
 
     private void Awake() {
         // 마우스 커서를 보이지 않게 설정하고, 현재 위치에 고정시킨다.
@@ -33,7 +32,6 @@ public class PlayerController : MonoBehaviour
         rotateToMouse = GetComponent<RotateToMouse>();
         movement = GetComponent<MoveCharacterController>();
         status = GetComponent<Status>();
-        animator = GetComponentInChildren<PlayerAnimatorController>();
         audioSource = GetComponent<AudioSource>();
         weapon = GetComponentInChildren<WeaponAssaultRifle>();
     }
@@ -73,7 +71,7 @@ public class PlayerController : MonoBehaviour
             // 삼항연산자
             movement.MoveSpeed = isRun == true ? status.RunSpeed : status.WalkSpeed;
             // isRun이 true 이면 status.RunSpeed 설정하고, false이면 status.WalkSpeed 가 설정된다.
-            animator.MoveSpeed = isRun == true ? 1 : 0.5f;
+            weapon.Animator.MoveSpeed   = isRun == true ? 1 : 0.5f;
             // 1 = 뛰기 애니메이션 0.5 = 걷기 애니메이션 animator.MoveSpeed 값을 전달한다
             audioSource.clip = isRun == true ? audioClipRun : audioClipWalk;
 
@@ -88,8 +86,8 @@ public class PlayerController : MonoBehaviour
         // 제자리에 멈춰 있을 때
         else
         {       
-            movement.MoveSpeed = 0;
-            animator.MoveSpeed = 0;
+            movement.MoveSpeed          = 0;
+            weapon.Animator.MoveSpeed   = 0;
             //멈췄을 때 사운드가 재생중이면 정지
             if (audioSource.isPlaying == true)
             {
@@ -142,5 +140,11 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("GameOver");
         }
+    }
+
+    public void SwitchingWeapon(WeaponBase newWeapon)
+    {   
+        // 교체되는 무기정보를 전달 받아 이동, 무기액션처리에 활용된다.
+        weapon = newWeapon;
     }
 }

@@ -45,4 +45,11 @@ public class PlayerAnimatorController : MonoBehaviour
         return animator.GetCurrentAnimatorStateInfo(0).IsName(name);
     }
 
+    public void SetFloat(string paramName, float value)
+    {
+        // 단검 종류 애니메이션이 두종류가 있고, 이것을 BlendTree에서 float 파라미터로 제어하고 있기 때문에
+        // 이 값을 설정할 수 있는 SetFloat메서드를 정의한다.
+        animator.SetFloat(paramName, value);
+    }
+
 }

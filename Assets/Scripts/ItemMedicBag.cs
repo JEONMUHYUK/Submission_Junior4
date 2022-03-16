@@ -15,11 +15,13 @@ public class ItemMedicBag : ItemBase
     private float       pingpongSpeed = 0.5f;
     [SerializeField]
     private float       rotateSpeed = 50f;
+
     
     private IEnumerator Start()
     {
         // 현재 y의 위치를 변수 y에 저장
         float y = transform.position.y;
+        
 
         while (true)
         {

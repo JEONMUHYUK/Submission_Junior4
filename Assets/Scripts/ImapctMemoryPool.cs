@@ -44,6 +44,33 @@ public class ImapctMemoryPool : MonoBehaviour
         }
     }
 
+    public void SpawnImpact(Collider other, Transform knifeTransform)
+    {
+        // ? Collider other : 부딪힌 오브젝트가 어떤 종류의 오브젝트인지 파악하기위한 매게변수
+        // ? Transform knifeTransform : 부딪혔을 때 임펙트를 재생하기 위한 위치 정보.
+        // 콜라이더에 부딪힌 오브젝트의 Tag 정보에 따라 다르게 처리
+        if ( other.CompareTag("ImpactNormal") )
+        {
+            // ? Quaternion.Inverse(knifeTransform.rotation) : rotation과 반대되는 회전값을 result에 반환 ( Iverse : 반대의 의미 )
+            OnSpawnImpact(ImpactType.Normal, knifeTransform.position, Quaternion.Inverse(knifeTransform.rotation));
+        }
+        else if ( other.transform.CompareTag("ImpactObstacle") )
+        {
+            OnSpawnImpact(ImpactType.Obstacle, knifeTransform.position, Quaternion.Inverse(knifeTransform.rotation));
+        }
+        else if ( other.transform.CompareTag("ImpactEnemy") )
+        {
+            OnSpawnImpact(ImpactType.Enemy, knifeTransform.position, Quaternion.Inverse(knifeTransform.rotation));
+        }
+        else if ( other.transform.CompareTag("InteractionObject") )
+        {
+            // 상호작용 오브젝트의 종류가 많기 때문에 오브젝트별로 타격효과를 생성하지 않고,
+            // 오브젝트 색상에 따라 색상만 바뀌도록 설정
+            Color color = other.transform.GetComponentInChildren<MeshRenderer>().material.color;
+            OnSpawnImpact(ImpactType.InteractionObject, knifeTransform.position, Quaternion.Inverse(knifeTransform.rotation), color);
+        }
+    }
+
     public void OnSpawnImpact(ImpactType type, Vector3 position, Quaternion rotation, Color color = new Color())
     {
         GameObject item = memoryPool[(int)type].ActivatePoolItem();

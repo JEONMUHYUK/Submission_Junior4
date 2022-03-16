@@ -1,60 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-
-public class WeaponAssaultRifle : WeaponBase  
+public class WeaponRevolver : WeaponBase
 {
     [Header("Fire Effects")]
     [SerializeField]
     private GameObject      muzzleFlashEffect;          // 총구 이펙트(On/Off)
 
-    [Header("Audio Clips")] // 굵은 글씨체로 인스펙터 창에 보이게 할 수 있다.
+    [Header("Spawn Points")]
     [SerializeField]
-    private AudioClip       audioClipTakeOutWeapon;     // 무기 장착 사운드
+    private Transform       bulletSpawnPoint;           // 총알 생성 위치
+
+    [Header("Audio Clips")]
     [SerializeField]
     private AudioClip       audioClipFire;              // 공격 사운드
     [SerializeField]
     private AudioClip       audioClipReload;            // 재장전 사운드
 
-    [Header("Spawn Points")]
-    [SerializeField]
-    private Transform       casingSpawnPoint;           // 탄피 생성 위치
-    [SerializeField]
-    private Transform       bulletSpawnPoint;           // 총알 생성 위치
-
-    [Header("Aim UI")]
-    [SerializeField]
-    private Image                   imageAim;           // defualt/aim 모드에 따라 Aim 이미지 활성/ 비활성
-
-    private bool            isModeChange = false;       // 모드 전환 여부 체크용
-    private float           defaultModeFOV = 60;        // 기본모드에서의 카메라 FOV
-    private float           aimModeFOV = 30;            // AIM모드에서의 카메라 FOV
-
-    private CasingMemoryPool casingMemoryPool;          // 탄피 생성 후 활성/비활성 관리
     private ImapctMemoryPool        imapctMemoryPool;   // 공격 효과 생성 후 활성/비활성 관리
     private Camera                  mainCamera;         // 광선 발사
 
-    private void Awake()
-    {
-        // 기반 클래스의 초기화를 위한 Setup() 메소드를 호출
-        base.Setup();
-
-        casingMemoryPool    = GetComponent<CasingMemoryPool>();
-        imapctMemoryPool    = GetComponent<ImapctMemoryPool>();
-        mainCamera          = Camera.main;
-
-        // 처음 탄창 수는 최대로 설정
-        weaponSetting.currentMagazine = weaponSetting.maxMagazine;
-        // 처음 탄 수는 최대로 설정
-        weaponSetting.currentAmmo = weaponSetting.maxAmmo;
-    }
-
     private void OnEnable() //무기 오브젝트가 활성화 될때 호출되는 함수.
     {
-        // 무기 장착 사운드 재생
-        PlaySound(audioClipTakeOutWeapon);
         // 총구 이펙트 비활성화
         muzzleFlashEffect.SetActive(false);
 
@@ -66,48 +34,31 @@ public class WeaponAssaultRifle : WeaponBase
         ResetVariables();
     }
 
-    public override void StartWeaponAction(int type=0) //마우스 타입 Mouse(0)
+    private void Awake()
     {
-        // 재장전 중일 때는 무기 액션을 할 수 없다.
-        if ( isReload == true ) return;                 // return으로 바로 반환시켜 함수를 종료한다.
+        // 기반 클래스의 초기화를 위한 Setup() 메소드를 호출
+        base.Setup();
 
-        // 모드 전환중이면 무기 액션을 할 수 없다.
-        if ( isModeChange == true ) return;           
+        imapctMemoryPool    = GetComponent<ImapctMemoryPool>();
+        mainCamera          = Camera.main;
 
-        // 마우스 왼쪽 클릭(공격 시작)
-        if( type == 0 )
+        // 처음 탄창 수는 최대로 설정
+        weaponSetting.currentMagazine = weaponSetting.maxMagazine;
+        // 처음 탄 수는 최대로 설정
+        weaponSetting.currentAmmo = weaponSetting.maxAmmo;
+    }
+
+    public override void StartWeaponAction(int type = 0)
+    {
+        if ( type == 0 && isAttack == false && isReload == false )
         {
-            //연속 공격
-            if ( weaponSetting.isAutomaticAttack == true)
-            {   
-                isAttack = true;
-                StartCoroutine("OnAttackLoop");
-            }
-            // 단발 공격
-            else
-            {
-                OnAttack();
-            }
-        }
-
-        // 마우스 우클릭 (모드 전환)
-        else
-        {
-            // 공격 중일 때는 모드 전환을 할 수 없다.
-            if ( isAttack == true ) return;
-
-            StartCoroutine("OnModeChange");
+            OnAttack();
         }
     }
 
-    public override void StopWeaponAction(int type=0)
+    public override void StopWeaponAction(int type = 0)
     {
-        //마우스 왼쪽 클릭 (공격 종료)
-        if (type==0)
-        {
-            isAttack = false;
-            StopCoroutine("OnAttackLoop");
-        }
+        isAttack = false;
     }
 
     public override void StartReload()
@@ -119,15 +70,6 @@ public class WeaponAssaultRifle : WeaponBase
         StopWeaponAction();
 
         StartCoroutine("OnReload");
-    }
-
-    private IEnumerator OnAttackLoop()
-    {
-        while (true)
-        {
-            OnAttack();
-            yield return null;
-        }
     }
 
     public void OnAttack()
@@ -153,16 +95,12 @@ public class WeaponAssaultRifle : WeaponBase
             onAmmoEvent.Invoke(weaponSetting.currentAmmo, weaponSetting.maxAmmo);
 
             //무기 애니메이션 재생 (모드에 따라 AimFire or Fire 애니메이션 재생)
-            //animator.Play("Fire", -1, 0);
-            string animation = animator.AimModeIs == true ? "AimFire" : "Fire";
-            animator.Play(animation, -1, 0);
-
-            // 총구 이펙트 재생 (default Mode 일 때만 재생)
-            if ( animator.AimModeIs == false ) StartCoroutine("OnMuzzleFlashEffect");
+            animator.Play("Fire", -1, 0);
+            // 총구 이펙트 재생
+            StartCoroutine("OnMuzzleFlashEffect");
             // 공격 사운드 재생
             PlaySound(audioClipFire);
-            // 탄피 생성
-            casingMemoryPool.SapwnCasing(casingSpawnPoint.position, transform.right);
+
 
             // 광선을 발사해 원하는 위치 공격 (+ Impact Effect)
             TwoStepRacast();
@@ -257,44 +195,10 @@ public class WeaponAssaultRifle : WeaponBase
 
         Debug.DrawRay(bulletSpawnPoint.position, attackDirection*weaponSetting.attackDistance, Color.blue);
     }
-
-    private IEnumerator OnModeChange()
-    {
-        float current           = 0;
-        float percent           = 0;
-        float time              = 0;
-
-        // animator.AimModeIs가 참이면 거짓으로 설정하고, animator.AimModeIs 거짓이면 참으로 설정한다.
-        // imageAim.enabled가 보이면 보이지 않게, imageAim.enabled가 보이지 않으면 보이게 설정한다.
-        animator.AimModeIs      = !animator.AimModeIs;
-        imageAim.enabled        = !imageAim.enabled;
-
-        //fieldOfView( FOV )
-        float start             = mainCamera.fieldOfView;
-        float end               = animator.AimModeIs == true ? aimModeFOV : defaultModeFOV;
-
-        isModeChange            = true;
-
-        while ( percent < 1 )
-        {
-            current += Time.deltaTime;
-            percent = current / time;
-
-            // mode에 따라 카메라의 시야각을 변경
-            mainCamera.fieldOfView = Mathf.Lerp(start, end, percent);
-
-            yield return null;
-        }
-
-        isModeChange = false;
-    }
-
+    
     private void ResetVariables()
     {
         isReload                = false;
         isAttack                = false;
-        isModeChange            = false; 
     }
-
-    
 }
